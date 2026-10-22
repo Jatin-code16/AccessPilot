@@ -51,3 +51,38 @@ def normalize_finding(
         template=template,
         needsHuman=kind == "incomplete" or template is None,
     )
+
+
+def normalize_axe_results(result: dict[str, object], maximum: int = 500) -> tuple[list[Finding], int]:
+    findings: list[Finding] = []
+    passed = len(result.get("passes", [])) if isinstance(result.get("passes"), list) else 0
+    for kind, key in (("violation", "violations"), ("incomplete", "incomplete")):
+        items = result.get(key, [])
+        if not isinstance(items, list):
+            continue
+        for rule in items:
+            if not isinstance(rule, dict):
+                continue
+            nodes = rule.get("nodes", [])
+            if not isinstance(nodes, list):
+                continue
+            for node_index, node in enumerate(nodes):
+                if len(findings) >= maximum:
+                    return findings, passed
+                if not isinstance(node, dict):
+                    continue
+                targets = node.get("target", [])
+                target = str(targets[0]) if isinstance(targets, list) and targets else "unknown"
+                findings.append(normalize_finding(
+                    finding_id=f"{rule.get('id', 'unknown')}-{node_index}",
+                    source="axe",
+                    kind=kind,
+                    rule_id=str(rule.get("id", "unknown")),
+                    impact=rule.get("impact") if rule.get("impact") in {"critical", "serious", "moderate", "minor"} else None,
+                    help_text=str(rule.get("help", "")),
+                    help_url=str(rule["helpUrl"]) if rule.get("helpUrl") else None,
+                    tags=[str(tag) for tag in rule.get("tags", []) if isinstance(tag, str)],
+                    target=target,
+                    snippet=str(node.get("html", "")),
+                ))
+    return findings, passed

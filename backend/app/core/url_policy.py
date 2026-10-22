@@ -14,7 +14,9 @@ def validate_url(url: str, allow_loopback: bool = False) -> None:
     except socket.gaierror as error:
         raise AccessPilotError("blocked_target", "The target host could not be resolved.", 403) from error
     for address in addresses:
-        if address.is_loopback and not allow_loopback:
-            raise AccessPilotError("blocked_target", "Loopback targets are blocked.", 403)
+        if address.is_loopback:
+            if not allow_loopback:
+                raise AccessPilotError("blocked_target", "Loopback targets are blocked.", 403)
+            continue
         if address.is_private or address.is_link_local or address.is_reserved or address.is_unspecified:
             raise AccessPilotError("blocked_target", "Private or reserved targets are blocked.", 403)

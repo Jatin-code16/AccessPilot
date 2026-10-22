@@ -72,3 +72,24 @@ def apply_t5(source: str, target_id: str, label_text: str, path: str) -> Templat
         updated_tag = tag[:-1] + f' aria-label="{label}">'
     updated = source[: match.start()] + updated_tag + source[match.end():]
     return TemplateResult(updated, _diff(source, updated, path))
+
+
+def apply_t3(source: str, selector: str, new_color: str, path: str) -> TemplateResult:
+    escaped_selector = re.escape(selector)
+    match = _single(source, rf"({escaped_selector}[^{{]*color\s*:\s*)(#[0-9a-fA-F]{{3,8}}|[a-zA-Z]+)(\s*;)")
+    updated = source[:match.start(2)] + new_color + source[match.end(2):]
+    return TemplateResult(updated, _diff(source, updated, path))
+
+
+def apply_template(template: str, source: str, params: dict[str, str], path: str) -> TemplateResult:
+    if template == "T1":
+        return apply_t1(source, params["targetId"], params["labelText"], path)
+    if template == "T2":
+        return apply_t2(source, params["targetId"], params["altText"], path)
+    if template == "T3":
+        return apply_t3(source, params["selector"], params["newColor"], path)
+    if template == "T4":
+        return apply_t4(source, params["lang"], path)
+    if template == "T5":
+        return apply_t5(source, params["targetId"], params["labelText"], path)
+    raise AccessPilotError("needs_human", "No repair template is available.", 409)

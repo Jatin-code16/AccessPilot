@@ -85,6 +85,74 @@ class Scan(StrictModel):
     trace: list[TraceEntry]
 
 
+class Proposal(StrictModel):
+    id: str
+    scan_id: str = Field(alias="scanId")
+    finding_id: str = Field(alias="findingId")
+    template: TemplateName
+    status: ProposalStatus
+    rationale: str
+    risk: Literal["low", "medium"]
+    files: list[str]
+    params: dict[str, str]
+    diff: str
+    diff_hash: str = Field(alias="diffHash")
+    proposed_by: Literal["agent", "builtin"] = Field(alias="proposedBy")
+
+
+class AgentRequest(StrictModel):
+    mode: Literal["auto", "builtin"] = "auto"
+
+
+class AgentRun(StrictModel):
+    id: str
+    scan_id: str = Field(alias="scanId")
+    ai_used: bool = Field(alias="aiUsed")
+    model: str | None
+    fallback_reason: Literal["no_key", "provider_error", "bad_output", "budget_exceeded"] | None = Field(alias="fallbackReason")
+    explanations: dict[str, str]
+    proposals: list[Proposal]
+    needs_human: list[dict[str, str]] = Field(alias="needsHuman")
+    trace: list[TraceEntry]
+
+
+class ApprovalResponse(StrictModel):
+    proposal_id: str = Field(alias="proposalId")
+    token: str
+    diff_hash: str = Field(alias="diffHash")
+    expires_at: str = Field(alias="expiresAt")
+
+
+class ProposalEdit(StrictModel):
+    params: dict[str, str]
+
+
+class ApplyRequest(StrictModel):
+    token: str = Field(min_length=1)
+
+
+class Comparison(StrictModel):
+    resolved: list[str]
+    remaining: list[str]
+    introduced: list[str]
+
+
+class ControlCheck(StrictModel):
+    passed: bool
+    new_findings: list[str] = Field(alias="newFindings")
+
+
+class ApplyResult(StrictModel):
+    proposal_id: str = Field(alias="proposalId")
+    before_scan_id: str = Field(alias="beforeScanId")
+    after_scan_id: str = Field(alias="afterScanId")
+    comparison: Comparison
+    control: ControlCheck
+    status: Status
+    reason: str
+    trace: list[TraceEntry]
+
+
 class HealthResponse(StrictModel):
     status: Literal["ok"]
     browser_available: bool = Field(alias="browserAvailable")

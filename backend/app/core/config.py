@@ -13,7 +13,10 @@ class Settings(BaseModel):
     frontend_origin: str = "http://127.0.0.1:5173"
     allow_loopback: bool = True
     sites_root: Path = Path(__file__).resolve().parents[3] / "sites"
+    work_root: Path = Path(__file__).resolve().parents[3] / "work"
     axe_path: Path = Path(__file__).resolve().parents[2] / "vendor" / "axe.min.js"
+    browser_timeout_ms: int = 30000
+    approval_ttl_seconds: int = 900
     ai_provider: str = "none"
     ai_base_url: str | None = None
     ai_api_key: str | None = None

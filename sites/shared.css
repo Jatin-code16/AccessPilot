@@ -1,0 +1,7 @@
+body { font-family: sans-serif; color: #1b1f24; background: #ffffff; }
+main { max-width: 720px; margin: 2rem auto; padding: 1rem; }
+.helper, #helper-text { color: #9b9b9b; }
+.icon { border: 0; background: transparent; }
+.clickable-div { padding: .75rem; border: 1px solid #555; }
+label { display: block; margin-top: .75rem; }
+input, button { min-height: 2.5rem; }
