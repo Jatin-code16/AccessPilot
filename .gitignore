@@ -17,6 +17,7 @@ venv/
 env/
 
 # Node and frontend build output
+**/node_modules/**
 node_modules/
 frontend/dist/
 frontend/.vite/
