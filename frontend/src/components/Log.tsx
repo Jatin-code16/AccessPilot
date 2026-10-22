@@ -10,6 +10,7 @@ interface LogProps {
   activeProposal: Proposal | null;
   approvalToken: string | null;
   applyResult: ApplyResult | null;
+  error: { code: string; message: string } | null;
   log: TraceEntry[];
   busy: boolean;
   onRunAgent: () => void;
@@ -18,7 +19,7 @@ interface LogProps {
   onApply: () => void;
 }
 
-export function Log({ scan, agentRun, activeProposal, approvalToken, applyResult, log, busy, onRunAgent, onApprove, onSkip, onApply }: LogProps) {
+export function Log({ scan, agentRun, activeProposal, approvalToken, applyResult, error, log, busy, onRunAgent, onApprove, onSkip, onApply }: LogProps) {
   const [expanded, setExpanded] = useState<number | null>(null);
   return (
     <section className="log-pane" aria-labelledby="log-title">
@@ -27,6 +28,7 @@ export function Log({ scan, agentRun, activeProposal, approvalToken, applyResult
         <span>{log.length} recorded steps</span>
       </div>
       {!scan && <p className="system-prompt">Enter a page and confirm you are authorised.</p>}
+      {error && <p className="system-error" role="alert">System: {error.message} ({error.code})</p>}
       <ol className="log-list" aria-live="polite">
         {log.map((entry) => (
           <li key={`${entry.seq}-${entry.name}`} className={`log-line actor-${entry.actor}`}>

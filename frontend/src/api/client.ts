@@ -10,7 +10,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const body: unknown = await response.json();
   if (!response.ok) {
     const apiError = body as ApiError;
-    throw new Error(apiError.error?.message ?? "The request could not finish.");
+    const error = new Error(apiError.error?.message ?? "The request could not finish.");
+    Object.assign(error, { code: apiError.error?.code ?? "request_failed" });
+    throw error;
   }
   return body as T;
 }

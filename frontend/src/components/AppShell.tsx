@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useWorkbench } from "../state";
 import { Log } from "./Log";
 import { PagePane } from "./PagePane";
@@ -6,6 +7,8 @@ import { StageDots } from "./StageDots";
 export function AppShell() {
   const workbench = useWorkbench();
   const hasScan = workbench.scan !== null;
+  const [url, setUrl] = useState("http://127.0.0.1:8000/sites/original/golden/index.html");
+  const [consent, setConsent] = useState(false);
 
   return (
     <div className="app-shell" data-theme={workbench.theme}>
@@ -16,12 +19,12 @@ export function AppShell() {
         </div>
         <div className="scan-controls">
           <label htmlFor="target-url">Page under test</label>
-          <input id="target-url" defaultValue="http://127.0.0.1:8000/sites/original/golden/index.html" />
+          <input id="target-url" value={url} onChange={(event) => setUrl(event.target.value)} />
           <label className="consent-label">
-            <input type="checkbox" defaultChecked />
+            <input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} />
             I&apos;m authorised
           </label>
-          <button type="button" className="primary-button" onClick={workbench.startScan} disabled={workbench.busy}>
+          <button type="button" className="primary-button" onClick={() => void workbench.startScan(url, consent)} disabled={workbench.busy || !consent}>
             {workbench.busy && !hasScan ? "Scanning..." : "Scan"}
           </button>
         </div>
@@ -46,6 +49,7 @@ export function AppShell() {
           activeProposal={workbench.activeProposal}
           approvalToken={workbench.approvalToken}
           applyResult={workbench.applyResult}
+          error={workbench.error}
           log={workbench.log}
           busy={workbench.busy}
           onRunAgent={workbench.runFixtureAgent}

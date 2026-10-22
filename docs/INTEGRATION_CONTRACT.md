@@ -102,6 +102,18 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000
 `VITE_API_BASE_URL` is a non-secret value. No provider key or approval token
 may be placed in a Vite environment variable.
 
+During parallel development, the frontend uses typed local fixtures by
+default because the backend may not be available yet. Set the non-secret
+frontend variable below to connect to the real backend:
+
+```text
+VITE_USE_FIXTURES=false
+```
+
+When this variable is false, API failures are shown as visible System errors.
+They are not converted into an empty or successful scan. Fixtures must be
+disabled before the frontend/backend integration check.
+
 ## 5. Endpoint handoff table
 
 The following table is an integration map, not a replacement for
