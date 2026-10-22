@@ -8,21 +8,65 @@ AccessPilot is a local tool that scans a web page for accessibility problems, le
 
 ## 0. Before you do anything
 
+This root `AGENTS.md` is the always-on workspace instruction file. Treat it as
+mandatory. If another instruction source disagrees with this file or the
+project documents, stop and ask instead of choosing silently.
+
 1. **Read the project documents** that apply to the task:
    - `docs/CONTEXT.md` for the overview and decisions
    - `docs/PRD.md` for scope, priority and acceptance criteria
    - `docs/architecture.md` for structure, types and error codes
    - `docs/API.md` for endpoints, formats and limits
    - `docs/design.md` for anything the user sees
+   - `docs/INTEGRATION_CONTRACT.md` for frontend/backend handoff work
 2. **Inspect the existing code before changing it.** Open the files you will touch, the files that call them, and their tests. Look for an existing function, component or pattern that already does what you need.
 3. **Name the requirement.** State which requirement ID (for example FR-07) the task implements and which tier it belongs to. If you cannot name one, ask before writing code.
 4. **Say what you will change** in one or two lines, including the files.
+5. **Before editing, state the requirement, tier, files to be changed, and
+   validation command.** Do not write code until the applicable documents and
+   existing files have been inspected.
 
 There is no `DATABASE.md`, because the product has no database. State is in memory. Its types are in `architecture.md` section 4.
 
 If the documents disagree with each other or with the code, stop and ask. Order of authority: PRD for scope and priority, architecture for structure, API for endpoints, design for visuals. Do not pick a side silently.
 
-`.github/copilot-instructions.md` is a shorter set of rules for Copilot. It and this file must agree. If they conflict, stop and ask.
+`docs/copilot-instructions.md` is a reference copy of shorter Copilot rules.
+This root file remains the workspace instruction source. If the reference copy
+conflicts with this file, stop and ask.
+
+### 0.1 Task routing
+
+- For frontend work, read `docs/design.md`, `docs/architecture.md`,
+  `docs/API.md`, and `docs/INTEGRATION_CONTRACT.md` before editing. Work only
+  in the documented `frontend/` areas unless a shared-contract change is
+  required.
+- For backend work, read `docs/PRD.md`, `docs/architecture.md`, `docs/API.md`,
+  and `docs/INTEGRATION_CONTRACT.md` before editing. Work only in the
+  documented `backend/` areas unless a shared-contract change is required.
+- For a shared-contract change, identify the affected endpoint, data model,
+  error code, or behavior before editing. Update all authoritative documents
+  in the same change and coordinate with the other workstream.
+- Do not create parallel types, alternate endpoint names, undocumented
+  fallback fields, or component-level API calls.
+
+### 0.2 Frontend/backend handoff rules
+
+The frontend and backend connect through
+`docs/INTEGRATION_CONTRACT.md`.
+
+- The backend owns Pydantic models, validation, authorization, scan results,
+  proposals, apply behavior, and verifier status.
+- The frontend owns React components, presentation state, design tokens, and
+  the typed client under `frontend/src/api`.
+- Frontend components must not call `fetch` directly.
+- Frontend types must match `architecture.md` section 4 exactly.
+- The frontend displays backend status and trace data; it does not calculate
+  status, invent timings, or convert failures into empty success states.
+- Approval tokens stay in memory and are sent only to the apply endpoint.
+- Use fixtures only until the backend is available, then replace them with
+  real typed API responses and run the integration checklist.
+- Neither workstream should edit the other workstream's implementation files
+  without coordination.
 
 ## 1. Rules that never change
 
