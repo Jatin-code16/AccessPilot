@@ -1,50 +1,21 @@
-.gitignore
-
-# Secrets and local configuration
-.env
-.env.*
-!.env.example
-
-# Python
 __pycache__/
 *.py[cod]
-*.pyo
 .pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
-htmlcov/
 .venv/
-venv/
-env/
+.env
+work/
 
-# Node and frontend build output
-**/node_modules/**
+# Frontend dependencies and build output
 node_modules/
 frontend/dist/
 frontend/.vite/
+frontend/coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Temporary application state
-work/
-*.tmp
-*.temp
-
-# Browser and test artifacts
-playwright-report/
-test-results/
-screenshots/
-downloads/
-
-# IDE and operating-system files
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-.idea/
-*.swp
-*.swo
-.DS_Store
-Thumbs.db
+# Frontend local environment files
+.env.*
+!.env.example
+.next
